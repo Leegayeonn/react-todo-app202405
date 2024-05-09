@@ -70,10 +70,43 @@ const TodoTemplate = () => {
     setTodos(removeTodos);
   };
 
+  // 할 일 체크 처리 함수
+  const checkTodo = (id) => {
+    const checkTodo = todos.map((todo) => {
+      return todo.id === id
+        ? { ...todo, done: !todo.done }
+        : todo;
+    });
+
+    setTodos(checkTodo);
+    // const copyTodos = [...todos];
+    // for (let cTodo of copyTodos) {
+    //   if (cTodo.id === id) {
+    //     cTodo.done = !cTodo.done;
+    //   }
+    // }
+
+    // setTodos(copyTodos);
+  };
+
+  // done false인 것만
+  // 체크가 안된 할일의 개수를 카운트 하기
+  const countRestTodo = () => {
+    const todoList = todos.filter((todo) => {
+      return !todo.done;
+    });
+
+    return todoList.length;
+  };
+
   return (
     <div className='TodoTemplate'>
-      <TodoHeader />
-      <TodoMain todoList={todos} remove={removeTodo} />
+      <TodoHeader count={countRestTodo} />
+      <TodoMain
+        todoList={todos}
+        remove={removeTodo}
+        check={checkTodo}
+      />
       <TodoInput addTodo={addTodo} />
     </div>
   );

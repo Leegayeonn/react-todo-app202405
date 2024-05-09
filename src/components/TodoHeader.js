@@ -19,7 +19,13 @@ const TodoHeader = ({ count }) => {
       <h1>{dateString}</h1>
       <div className='day'>{dayName}</div>
       <div className='tasks-left'>
-        할 일 {count()}개 남음
+        {count() === 0 ? (
+          <span className='none'>
+            할 일을 추가해주세요!
+          </span>
+        ) : (
+          <span>할 일 {count()}개 남음</span>
+        )}
       </div>
     </header>
   );

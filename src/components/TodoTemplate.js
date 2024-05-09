@@ -62,10 +62,18 @@ const TodoTemplate = () => {
     setTodos([...todos, newTodo]);
   };
 
+  // 할일 삭제처리 함수
+  const removeTodo = (id) => {
+    const removeTodos = todos.filter(
+      (todo) => todo.id !== id,
+    );
+    setTodos(removeTodos);
+  };
+
   return (
     <div className='TodoTemplate'>
       <TodoHeader />
-      <TodoMain todoList={todos} />
+      <TodoMain todoList={todos} remove={removeTodo} />
       <TodoInput addTodo={addTodo} />
     </div>
   );

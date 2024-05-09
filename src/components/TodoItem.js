@@ -3,7 +3,7 @@ import '../scss/TodoItem.scss';
 import { FaCheck } from 'react-icons/fa6';
 import { MdDelete } from 'react-icons/md';
 
-const TodoItem = ({ item }) => {
+const TodoItem = ({ item, remove }) => {
   const { id, title, done } = item;
 
   return (
@@ -13,7 +13,7 @@ const TodoItem = ({ item }) => {
       </div>
       <span className='text'>{title}</span>
       <div className='remove'>
-        <MdDelete />
+        <MdDelete onClick={() => remove(item.id)} />
       </div>
     </li>
   );

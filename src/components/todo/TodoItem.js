@@ -1,5 +1,5 @@
 import React from 'react';
-import '../scss/TodoItem.scss';
+import '../../scss/TodoItem.scss';
 import { FaCheck } from 'react-icons/fa6';
 import { MdDelete } from 'react-icons/md';
 import cn from 'classnames';

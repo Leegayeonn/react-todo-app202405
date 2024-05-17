@@ -13,7 +13,7 @@ const Header = () => {
     <AppBar
       position='fixed'
       style={{
-        background: '#38d9a9',
+        background: 'orange',
         width: '100%',
       }}
     >

@@ -47,9 +47,13 @@ const Join = () => {
     flag,
     msg,
   }) => {
-    setUserValue((oldValue) => {
-      return { ...oldValue, [key]: inputValue };
-    });
+    // 입력값 세팅
+    // 패스워드 확인 입력값은 굳이 userValue 상태로 유지할 필요가 없기 때문에
+    // 임의의 문자열 'pass'를 넘기고 있다 -> pass가 넘어온다면 setUserValue()를 실행하지 않겠다.
+    inputValue !== 'pass' &&
+      setUserValue((oldValue) => {
+        return { ...oldValue, [key]: inputValue };
+      });
 
     //메세지 세팅
     setMessage((oldMsg) => {
@@ -143,6 +147,102 @@ const Join = () => {
     });
   };
 
+  // 패스워드 입력창 이벤트 핸들러
+  const passwordHandler = (e) => {
+    // 패스워드가 변경? ->  패스워드 확인란 초기화
+    document.getElementById('password-check').value = '';
+    setMessage({ ...message, passwordCheck: '' });
+    setCorrect({ ...correct, passwordCheck: false });
+
+    const inputValue = e.target.value;
+    const pwRegex =
+      /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/;
+
+    let msg;
+    let flag = false;
+
+    if (!inputValue) {
+      msg = '비밀번호는 필수입니다.';
+    } else if (!pwRegex.test(inputValue)) {
+      msg =
+        '8글자 이상의 영문, 숫자, 특수문자를 포함해 주세요.';
+    } else {
+      msg = '사용가능한 비밀번호 입니다.';
+      flag = true;
+    }
+
+    saveInputState({
+      key: 'password',
+      inputValue,
+      msg,
+      flag,
+    });
+  };
+
+  // 패스워드 확인입력창 이벤트 핸들러
+  const pwCheckHandler = (e) => {
+    let msg;
+    let flag = false;
+
+    if (!e.target.value) {
+      msg = '비밀번호 확인란은 필수입니다.';
+    } else if (userValue.password !== e.target.value) {
+      msg = '비밀번호가 일치하지 않습니다.';
+    } else {
+      msg = '비밀번호가 일치합니다.';
+      flag = true;
+    }
+    saveInputState({
+      key: 'passwordCheck',
+      inputValue: 'pass',
+      msg,
+      flag,
+    });
+  };
+  // 4개의 입력창이 모두 검증 통과 했는지 여부를 검사
+  const isValid = () => {
+    for (let key in correct) {
+      const flag = correct[key];
+      if (!flag) {
+        return false;
+      }
+    }
+    return true;
+  };
+
+  // 회원가입 처리 서버에 요청
+  const fetchSignUpPost = () => {
+    fetch(`${API_BASE_URL}${USER}`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(userValue),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        alert(
+          `회원가입 성공! \n******정보****** \n${data.userName}님 \n${data.email}`,
+        );
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+        alert(
+          '서버와의 통신이 원활하지 않습니다. 관리자 문의!!',
+        );
+      });
+  };
+
+  // 회원가입 버튼 클릭 이벤트 핸들러
+  const joinButtonClickHandler = (e) => {
+    e.preventDefault();
+
+    if (isValid()) {
+      // fetch를 사용한 회원가입 요청
+      fetchSignUpPost();
+    } else {
+      alert('입력란을 다시 확인 해주세요!');
+    }
+  };
+
   return (
     <Container
       component='main'
@@ -153,7 +253,7 @@ const Join = () => {
         <Grid container spacing={2}>
           <Grid item xs={12}>
             <Typography component='h1' variant='h5'>
-              계정 생성
+              회원 가입
             </Typography>
           </Grid>
           <Grid item xs={12}>
@@ -209,8 +309,17 @@ const Join = () => {
               type='password'
               id='password'
               autoComplete='current-password'
+              onChange={passwordHandler}
             />
-            <span></span>
+            <span
+              style={
+                correct.password
+                  ? { color: 'green' }
+                  : { color: 'red' }
+              }
+            >
+              {message.password}
+            </span>
           </Grid>
 
           <Grid item xs={12}>
@@ -223,8 +332,18 @@ const Join = () => {
               type='password'
               id='password-check'
               autoComplete='check-password'
+              onChange={pwCheckHandler}
             />
-            <span id='check-span'></span>
+            <span
+              id='check-span'
+              style={
+                correct.passwordCheck
+                  ? { color: 'green' }
+                  : { color: 'red' }
+              }
+            >
+              {message.passwordCheck}
+            </span>
           </Grid>
 
           <Grid item xs={12}>
@@ -233,12 +352,17 @@ const Join = () => {
               fullWidth
               variant='contained'
               style={{ background: '#38d9a9' }}
+              onClick={joinButtonClickHandler}
             >
-              계정 생성
+              회원 가입
             </Button>
           </Grid>
         </Grid>
-        <Grid container justify='flex-end'>
+        <Grid
+          container
+          justify='flex-end'
+          style={{ marginTop: '20px' }}
+        >
           <Grid item>
             <Link href='/login' variant='body2'>
               이미 계정이 있습니까? 로그인 하세요.

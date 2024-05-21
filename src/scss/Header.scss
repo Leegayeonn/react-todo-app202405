@@ -1,5 +1,6 @@
-.btn-group {
-  font-size: 24px;
+.btn-group * {
+  font-size: 28px;
+  cursor: pointer;
 }
 .btn-group a,
 .logout-btn {
@@ -15,3 +16,4 @@
   color: #333;
   font-weight: 700;
 }
+

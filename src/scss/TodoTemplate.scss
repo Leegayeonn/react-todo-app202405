@@ -3,7 +3,7 @@
   height: 768px;
 
   position: relative;
-  background: #fff;
+  background: #fff0c7;
   border-radius: 16px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.4);
 
@@ -12,4 +12,19 @@
 
   display: flex;
   flex-direction: column;
+
+  
+}
+
+.loading {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  .spinner-border {
+    width: 200px;
+    height: 200px;
+    --bs-spinner-border-width: 1.5rem;
+  }
 }

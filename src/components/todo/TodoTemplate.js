@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TodoHeader from './TodoHeader';
 import TodoMain from './TodoMain';
 import TodoInput from './TodoInput';
 import '../../scss/TodoTemplate.scss';
 import { useNavigate } from 'react-router-dom';
+import { Spinner } from 'reactstrap';
 
 const TodoTemplate = () => {
   const redirection = useNavigate();
-  // 백엔드 서버에 할일 목록(json)을 요청(fetch)해서 받아와야함.
+
+  // 백엔드 서버에 할 일 목록(json)을 요청(fetch)해서 받아와야 함.
   const API_BASE_URL = 'http://localhost:8181/api/todos';
 
   // todos 배열을 상태 관리
@@ -20,27 +22,21 @@ const TodoTemplate = () => {
   const requestHeader = {
     'content-type': 'application/json',
     // JWT에 대한 인증 토큰이라는 타입을 선언.
-    Athorization: 'Bearer' + token,
+    Authorization: 'Bearer ' + token,
   };
-
-  /*
-  // id값 시퀀스 함수 (DB 연동시키면 필요없게 됨.)
-  const makeNewId = () => {
-    if (todos.length === 0) return 1;
-    return todos[todos.length - 1].id + 1; // 맨 마지막 할 일 객체의 id보다 하나 크게
-  };
-  */
 
   /*
   TodoInput에게 todoText를 받아오는 함수
-  자식 컴포넌트가 부모 컴포넌트에게 데이터를 전달할 떄는 일반적인 props 사용이 불가능.
-  부모 컴포넌트에서 함수를 선언(매개변수 꼭 선언) -> props로 함수를 전달
+  자식 컴포넌트가 부모 컴포넌트에게 데이터를 전달할 때는
+  일반적인 props 사용이 불가능.
+  부모 컴포넌트에서 함수를 선언(매개변수 꼭 선언) -> props로 함수를 전달.
   자식 컴포넌트에서 전달받은 함수를 호출하면서 매개값으로 데이터를 전달.
   */
   const addTodo = async (todoText) => {
     const newTodo = {
       title: todoText,
     };
+
     const res = await fetch(API_BASE_URL, {
       method: 'POST',
       headers: requestHeader,
@@ -57,9 +53,8 @@ const TodoTemplate = () => {
       body: JSON.stringify(newTodo),
     })
       .then((res) => {
-        if (res.status === 200) {
-          return res.json();
-        } else {
+        if (res.status === 200) return res.json();
+        else {
           // status 코드에 따라 에러 처리를 다르게 진행하면 됨.
           console.log('error occured!');
         }
@@ -67,10 +62,9 @@ const TodoTemplate = () => {
       .then((data) => {
         setTodos(data.todos);
       });
-      */
+    */
   };
-
-  // 할일 삭제처리 함수
+  // 할 일 삭제 처리 함수
   const removeTodo = (id) => {
     fetch(`${API_BASE_URL}/${id}`, {
       method: 'DELETE',
@@ -83,7 +77,6 @@ const TodoTemplate = () => {
         alert('잘못된 삭제 요청입니다!');
       });
   };
-
   // 할 일 체크 처리 함수
   const checkTodo = (id, done) => {
     fetch(API_BASE_URL, {
@@ -97,16 +90,9 @@ const TodoTemplate = () => {
       .then((res) => res.json())
       .then((json) => setTodos(json.todos));
   };
-
-  // done false인 것만
-  // 체크가 안된 할일의 개수를 카운트 하기
-  const countRestTodo = () => {
-    const todoList = todos.filter((todo) => {
-      return !todo.done;
-    });
-
-    return todoList.length;
-  };
+  // 체크가 안 된 할 일의 개수를 카운트 하기
+  const countRestTodo = () =>
+    todos.filter((todo) => !todo.done).length;
 
   useEffect(() => {
     // 페이지가 처음 렌더링 됨과 동시에 할 일 목록을 서버에 요청해서 뿌려 주겠습니다.
@@ -124,13 +110,13 @@ const TodoTemplate = () => {
         }
       })
       .then((json) => {
-        console.log(json);
         // fetch를 통해 받아온 데이터를 상태 변수에 할당
         if (json) setTodos(json.todos);
       });
   }, []);
 
-  return (
+  // 로딩이 끝난 후 보여줄 컴포넌트
+  const loadEndedPage = (
     <div className='TodoTemplate'>
       <TodoHeader count={countRestTodo} />
       <TodoMain
@@ -141,6 +127,15 @@ const TodoTemplate = () => {
       <TodoInput addTodo={addTodo} />
     </div>
   );
+
+  // 로딩 중일 때 보여줄 컴포넌트
+  const loadingPage = (
+    <div className='loading'>
+      <Spinner color='red'>loading...</Spinner>
+    </div>
+  );
+
+  return loadEndedPage;
 };
 
 export default TodoTemplate;

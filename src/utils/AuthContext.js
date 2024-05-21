@@ -10,7 +10,7 @@ const AuthContext = React.createContext({
 // 위에서 생성한 컨텍스트를 제공할수 있는 provider
 // 이 컴포넌트를 통해 자식 컴포넌트(consumer)에게 인증 상태와 관련된 값, 함수를 전달할 수 있음.
 export const AuthContextProvider = (props) => {
-  const [isLoggedIn, setIsLoggedin] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
 
   // 로그인 핸들러
@@ -21,20 +21,20 @@ export const AuthContextProvider = (props) => {
     localStorage.setItem('ACCESS_TOKEN', token);
     localStorage.setItem('LOGIN_USERNAME', userName);
     localStorage.setItem('USER_ROLE', role);
-    setIsLoggedin(true);
+    setIsLoggedIn(true);
     setUserName(userName);
   };
 
   // 로그아웃 핸들러
   const logoutHandler = () => {
     localStorage.clear(); // 로컬 스토리지 내용 전체 삭제
-    setIsLoggedin(false);
+    setIsLoggedIn(false);
     setUserName('');
   };
 
   useEffect(() => {
     if (localStorage.getItem('ACCESS_TOKEN')) {
-      setIsLoggedin(true);
+      setIsLoggedIn(true);
       setUserName(localStorage.getItem('LOGIN_USERNAME'));
     }
   }, []);

@@ -4,7 +4,7 @@ import {
   Toolbar,
   Typography,
 } from '@mui/material';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../scss/Header.scss';
 import AuthContext from '../../utils/AuthContext';

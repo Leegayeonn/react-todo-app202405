@@ -17,6 +17,7 @@ import {
 import axiosInstance from '../../config/axios-config';
 import handleRequst from '../../utils/handleRequest';
 import AuthContext from '../../utils/AuthContext';
+import { red } from '@mui/material/colors';
 
 const TodoTemplate = () => {
   const redirection = useNavigate();
@@ -62,15 +63,8 @@ const TodoTemplate = () => {
     handleRequst(
       () => axiosInstance.delete(`${API_BASE_URL}/${id}`),
       (data) => setTodos(data.todos),
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해주세요',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
   // 할 일 체크 처리 함수
@@ -82,15 +76,8 @@ const TodoTemplate = () => {
           done: !done,
         }),
       (data) => setTodos(data.todos),
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해주세요',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
   // 체크가 안 된 할 일의 개수를 카운트 하기
@@ -106,17 +93,8 @@ const TodoTemplate = () => {
         localStorage.setItem('USER_ROLE', data.role);
         setToken(data.token);
       },
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해주세요',
-          );
-          onLogout();
-          redirection('/login');
-        } else if (error.response === 400) {
-          alert('이미 프리미엄 회원입니다.');
-        }
-      },
+      onLogout,
+      redirection,
     );
   };
 
@@ -128,15 +106,8 @@ const TodoTemplate = () => {
         setTodos(data.todos);
         setLoading(false);
       },
-      (error) => {
-        if (error.response && error.response === 401) {
-          alert(
-            '로그인 시간이 만료되었습니다. 다시 로그인 해주세요',
-          );
-          onLogout();
-          redirection('/login');
-        }
-      },
+      onLogout,
+      redirection,
     );
   }, []);
 
